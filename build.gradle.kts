@@ -10,6 +10,7 @@ val sqlite_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.4.21"
+    kotlin("plugin.serialization") version "1.4.10"
 }
 
 group = "io.kraftsman"
@@ -30,7 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-jackson:$ktor_version")
+    implementation("io.ktor:ktor-serialization:$ktor_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")

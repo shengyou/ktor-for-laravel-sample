@@ -1,13 +1,13 @@
 package io.kraftsman
 
 import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.ktor.http.*
-import com.fasterxml.jackson.databind.*
-import io.ktor.jackson.*
 import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.serialization.*
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -25,9 +25,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
-        jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
-        }
+        json()
     }
 
     Database.connect(
@@ -47,7 +45,7 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
-        get("/json/jackson") {
+        get("/json/kotlinx-serialization") {
             call.respond(mapOf("hello" to "world"))
         }
 
@@ -138,4 +136,5 @@ class Task(id: EntityID<Int>) : IntEntity(id) {
     var completed by Tasks.completed
 }
 
+@Serializable
 data class TaskDto(val id: Int?, val title: String, val completed: Boolean = false)
