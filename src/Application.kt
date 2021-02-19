@@ -13,8 +13,11 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.Connection
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -28,9 +31,16 @@ fun Application.module(testing: Boolean = false) {
     }
 
     Database.connect(
-        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-        driver = "org.h2.Driver"
+        url = "jdbc:sqlite:./database/database.sqlite",
+//        url = "jdbc:sqlite::memory:",
+        driver = "org.sqlite.JDBC"
     )
+
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+
+    transaction {
+        SchemaUtils.create(Tasks)
+    }
 
     routing {
         get("/") {
@@ -116,7 +126,7 @@ fun Application.module(testing: Boolean = false) {
     }
 }
 
-object Tasks : IntIdTable() {
+object Tasks : IntIdTable("tasks") {
     val title = varchar("title", 255)
     val completed = bool("completed").default(false)
 }
